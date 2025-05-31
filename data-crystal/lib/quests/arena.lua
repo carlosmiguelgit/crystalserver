@@ -48,7 +48,7 @@ SvargrondArena = {
 		[1] = {
 			name        = "Greenhorn",
 			price       = 1000,
-			questLog    = Storage.Quest.U8_0.BarbarianArena.QuestLogGreenhorn,
+			questLog    = Storage.CrystalServer.IceCity.BarbarianArena.QuestLogGreenhorn,
 			achievement = "Greenhorn",
 			creatures   = {
 				"frostfur", "bloodpaw", "bovinus", "achad", "colerian the barbarian",
@@ -58,7 +58,7 @@ SvargrondArena = {
 		[2] = {
 			name        = "Scrapper",
 			price       = 5000,
-			questLog    = Storage.Quest.U8_0.BarbarianArena.QuestLogScrapper,
+			questLog    = Storage.CrystalServer.IceCity.BarbarianArena.QuestLogScrapper,
 			achievement = "Scrapper",
 			creatures   = {
 				"avalanche", "kreebosh the exile", "the dark dancer", "the hag", "slim",
@@ -68,7 +68,7 @@ SvargrondArena = {
 		[3] = {
 			name        = "Warlord",
 			price       = 10000,
-			questLog    = Storage.Quest.U8_0.BarbarianArena.QuestLogWarlord,
+			questLog    = Storage.CrystalServer.IceCity.BarbarianArena.QuestLogWarlord,
 			achievement = "Warlord of Svargrond",
 			creatures   = {
 				"webster", "darakan the executioner", "norgle glacierbeard", "the pit lord", "svoren the mad",
@@ -80,17 +80,17 @@ SvargrondArena = {
 	trophies = {
 		[3264] = {
 			trophy        = 5807,
-			trophyStorage = Storage.Quest.U8_0.BarbarianArena.TrophyGreenhorn,
+			trophyStorage = Storage.CrystalServer.IceCity.BarbarianArena.TrophyGreenhorn,
 			desc          = "It is given to the courageous victor of the barbarian arena in greenhorn difficulty. Awarded to %s"
 		},
 		[3265] = {
 			trophy        = 5806,
-			trophyStorage = Storage.Quest.U8_0.BarbarianArena.TrophyScrapper,
+			trophyStorage = Storage.CrystalServer.IceCity.BarbarianArena.TrophyScrapper,
 			desc          = "It is given to the courageous victor of the barbarian arena in scrapper difficulty. Awarded to %s."
 		},
 		[3266] = {
 			trophy        = 5805,
-			trophyStorage = Storage.Quest.U8_0.BarbarianArena.TrophyWarlord,
+			trophyStorage = Storage.CrystalServer.IceCity.BarbarianArena.TrophyWarlord,
 			desc          = "It is given to the courageous victor of the barbarian arena in warlord difficulty. Awarded to %s."
 		}
 	}
@@ -152,10 +152,10 @@ function SvargrondArena.kickPlayer(cid, hideMessage)
 	SvargrondArena.cancelEvents(cid)
 	local player = Player(cid)
 	if not player then return end
-	if player:getStorageValue(Storage.Quest.U8_0.BarbarianArena.PitDoor) > 0 then
+	if player:getStorageValue(Storage.CrystalServer.IceCity.BarbarianArena.PitDoor) > 0 then
 		player:teleportTo(SvargrondArena.kickPosition)
 		SvargrondArena.kickPosition:sendMagicEffect(CONST_ME_TELEPORT)
-		player:setStorageValue(Storage.Quest.U8_0.BarbarianArena.PitDoor, 0)
+		player:setStorageValue(Storage.CrystalServer.IceCity.BarbarianArena.PitDoor, 0)
 		if not hideMessage then
 			player:sendTextMessage(MESSAGE_EVENT_ADVANCE, "Your time ran out!")
 		end
