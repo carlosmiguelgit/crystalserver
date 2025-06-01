@@ -355,9 +355,9 @@ void IOLoginDataLoad::loadPlayerDefaultOutfit(const std::shared_ptr<Player> &pla
 		} while (result3->next());
 	}
 
-    // Ensure player starts with no modified outfits or mounts
-    player->setOutfitsModified(false);
-    player->setMountsModified(false);
+	// Ensure player starts with no modified outfits or mounts
+	player->setOutfitsModified(false);
+	player->setMountsModified(false);
 }
 
 void IOLoginDataLoad::loadPlayerSkullSystem(const std::shared_ptr<Player> &player, const DBResult_ptr &result) {
