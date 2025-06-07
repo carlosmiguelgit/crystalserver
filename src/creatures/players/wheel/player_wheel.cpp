@@ -2040,8 +2040,7 @@ void PlayerWheel::reloadPlayerData() const {
 		return;
 	}
 
-	m_player.sendSkills();
-	m_player.sendStats();
+	m_player.addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 	m_player.sendBasicData();
 	sendGiftOfLifeCooldown();
 	g_game().reloadCreature(m_player.getPlayer());
@@ -2710,8 +2709,7 @@ void PlayerWheel::checkAbilities() {
 	}
 
 	if (reloadClient) {
-		m_player.sendSkills();
-		m_player.sendStats();
+		m_player.addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 	}
 }
 
@@ -3161,8 +3159,7 @@ void PlayerWheel::onThink(bool force /* = false*/) {
 			for (int i = 0; i < static_cast<int>(WheelMajor_t::TOTAL_COUNT); i++) {
 				setMajorStat(static_cast<WheelMajor_t>(i), 0);
 			}
-			m_player.sendSkills();
-			m_player.sendStats();
+			m_player.addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 			g_game().reloadCreature(m_player.getPlayer());
 		}
 		if (!force) {
@@ -3190,8 +3187,7 @@ void PlayerWheel::onThink(bool force /* = false*/) {
 		updateClient = true;
 	}
 	if (updateClient) {
-		m_player.sendSkills();
-		m_player.sendStats();
+		m_player.addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 	}
 }
 

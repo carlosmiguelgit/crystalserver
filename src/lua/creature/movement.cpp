@@ -629,8 +629,7 @@ uint32_t MoveEvent::EquipItem(const std::shared_ptr<MoveEvent> &moveEvent, const
 		player->setMainBackpackUnassigned(item->getContainer());
 	}
 
-	player->sendStats();
-	player->sendSkills();
+	player->addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 	return 1;
 }
 
@@ -706,8 +705,7 @@ uint32_t MoveEvent::DeEquipItem(const std::shared_ptr<MoveEvent> &, const std::s
 		g_game().transformItem(item, it.transformDeEquipTo);
 	}
 
-	player->sendStats();
-	player->sendSkills();
+	player->addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 	return 1;
 }
 

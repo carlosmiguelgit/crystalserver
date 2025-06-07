@@ -577,7 +577,7 @@ int CreatureFunctions::luaCreatureSetHealth(lua_State* L) {
 
 	const auto &player = creature->getPlayer();
 	if (player) {
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 	}
 	Lua::pushBoolean(L, true);
 	return 1;
@@ -629,7 +629,7 @@ int CreatureFunctions::luaCreatureSetMaxHealth(lua_State* L) {
 
 	const auto &player = creature->getPlayer();
 	if (player) {
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 	}
 	Lua::pushBoolean(L, true);
 	return 1;

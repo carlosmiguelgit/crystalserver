@@ -737,8 +737,7 @@ void ConditionAttributes::updateStats(const std::shared_ptr<Player> &player) con
 	}
 
 	if (needUpdate) {
-		player->sendStats();
-		player->sendSkills();
+		player->addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 	}
 }
 
@@ -765,7 +764,7 @@ void ConditionAttributes::updateSkills(const std::shared_ptr<Player> &player) co
 	}
 
 	if (needUpdateSkills) {
-		player->sendSkills();
+		player->addScheduledUpdates(PlayerUpdate_Skills);
 	}
 }
 
@@ -864,8 +863,7 @@ void ConditionAttributes::endCondition(std::shared_ptr<Creature> creature) {
 		player->setCharmChanceModifier(player->getCharmChanceModifier() - charmChanceModifier);
 
 		if (needUpdate) {
-			player->sendStats();
-			player->sendSkills();
+			player->addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 		}
 	}
 	bool needUpdateIcons = false;
@@ -1263,14 +1261,14 @@ bool ConditionRegeneration::startCondition(std::shared_ptr<Creature> creature) {
 	}
 
 	if (const auto &player = creature->getPlayer()) {
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 	}
 	return true;
 }
 
 void ConditionRegeneration::endCondition(std::shared_ptr<Creature> creature) {
 	if (const auto &player = creature->getPlayer()) {
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 	}
 }
 
@@ -1288,7 +1286,7 @@ void ConditionRegeneration::addCondition(std::shared_ptr<Creature> creature, con
 	}
 
 	if (const auto &player = creature->getPlayer()) {
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 	}
 }
 
@@ -1447,7 +1445,7 @@ bool ConditionManaShield::startCondition(std::shared_ptr<Creature> creature) {
 	creature->setMaxManaShield(manaShield);
 
 	if (const auto &player = creature->getPlayer()) {
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 	}
 
 	return true;
@@ -1457,7 +1455,7 @@ void ConditionManaShield::endCondition(std::shared_ptr<Creature> creature) {
 	creature->setManaShield(0);
 	creature->setMaxManaShield(0);
 	if (const auto &player = creature->getPlayer()) {
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 	}
 }
 
@@ -1472,7 +1470,7 @@ void ConditionManaShield::addCondition(std::shared_ptr<Creature> creature, const
 	creature->setMaxManaShield(manaShield);
 
 	if (const auto &player = creature->getPlayer()) {
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 	}
 }
 

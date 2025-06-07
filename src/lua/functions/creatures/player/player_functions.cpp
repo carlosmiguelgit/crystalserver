@@ -1066,7 +1066,7 @@ int PlayerFunctions::luaPlayerSetCapacity(lua_State* L) {
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
 	if (player) {
 		player->capacity = Lua::getNumber<uint32_t>(L, 2);
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -1514,7 +1514,7 @@ int PlayerFunctions::luaPlayerSetMaxMana(lua_State* L) {
 	player->manaMax = Lua::getNumber<int32_t>(L, 2);
 	player->mana = std::min<int32_t>(player->mana, player->manaMax);
 	g_game().addPlayerMana(player);
-	player->sendStats();
+	player->addScheduledUpdates(PlayerUpdate_Stats);
 	Lua::pushBoolean(L, true);
 	return 1;
 }
@@ -1633,8 +1633,7 @@ int PlayerFunctions::luaPlayerSetLevel(lua_State* L) {
 		const uint16_t level = Lua::getNumber<uint16_t>(L, 2);
 		player->level = level;
 		player->experience = Player::getExpForLevel(level);
-		player->sendStats();
-		player->sendSkills();
+		player->addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -1657,8 +1656,7 @@ int PlayerFunctions::luaPlayerSetMagicLevel(lua_State* L) {
 			player->manaSpent = 0;
 			player->magLevelPercent = 0;
 		}
-		player->sendStats();
-		player->sendSkills();
+		player->addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -1682,8 +1680,7 @@ int PlayerFunctions::luaPlayerSetSkillLevel(lua_State* L) {
 			player->skills[skillType].tries = 0;
 			player->skills[skillType].percent = 0;
 		}
-		player->sendStats();
-		player->sendSkills();
+		player->addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -1697,7 +1694,7 @@ int PlayerFunctions::luaPlayerAddOfflineTrainingTime(lua_State* L) {
 	if (player) {
 		const int32_t time = Lua::getNumber<int32_t>(L, 2);
 		player->addOfflineTrainingTime(time);
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -1722,7 +1719,7 @@ int PlayerFunctions::luaPlayerRemoveOfflineTrainingTime(lua_State* L) {
 	if (player) {
 		const int32_t time = Lua::getNumber<int32_t>(L, 2);
 		player->removeOfflineTrainingTime(time);
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -1902,8 +1899,7 @@ int PlayerFunctions::luaPlayerSetVocation(lua_State* L) {
 	}
 
 	player->setVocation(vocation->getId());
-	player->sendSkills();
-	player->sendStats();
+	player->addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 	player->sendBasicData();
 	player->wheel()->sendGiftOfLifeCooldown();
 	g_game().reloadCreature(player);
@@ -2151,7 +2147,7 @@ int PlayerFunctions::luaPlayerSetStamina(lua_State* L) {
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
 	if (player) {
 		player->staminaMinutes = std::min<uint16_t>(2520, stamina);
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 	} else {
 		lua_pushnil(L);
 	}
@@ -3720,7 +3716,7 @@ int PlayerFunctions::luaPlayerSetBaseXpGain(lua_State* L) {
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
 	if (player) {
 		player->setBaseXpGain(Lua::getNumber<uint16_t>(L, 2));
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -3744,7 +3740,7 @@ int PlayerFunctions::luaPlayerSetVoucherXpBoost(lua_State* L) {
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
 	if (player) {
 		player->setVoucherXpBoost(Lua::getNumber<uint16_t>(L, 2));
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -3768,7 +3764,7 @@ int PlayerFunctions::luaPlayerSetGrindingXpBoost(lua_State* L) {
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
 	if (player) {
 		player->setGrindingXpBoost(Lua::getNumber<uint16_t>(L, 2));
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -3828,7 +3824,7 @@ int PlayerFunctions::luaPlayerSetStaminaXpBoost(lua_State* L) {
 	const auto &player = Lua::getUserdataShared<Player>(L, 1);
 	if (player) {
 		player->setStaminaXpBoost(Lua::getNumber<uint16_t>(L, 2));
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -3842,7 +3838,7 @@ int PlayerFunctions::luaPlayerSetXpBoostTime(lua_State* L) {
 	if (player) {
 		const uint16_t timeLeft = Lua::getNumber<uint16_t>(L, 2);
 		player->setXpBoostTime(timeLeft);
-		player->sendStats();
+		player->addScheduledUpdates(PlayerUpdate_Stats);
 		Lua::pushBoolean(L, true);
 	} else {
 		lua_pushnil(L);
@@ -4532,8 +4528,7 @@ int PlayerFunctions::luaPlayerReloadData(lua_State* L) {
 		return 1;
 	}
 
-	player->sendSkills();
-	player->sendStats();
+	player->addScheduledUpdates((PlayerUpdate_Stats | PlayerUpdate_Skills));
 	player->sendBasicData();
 	player->wheel()->sendGiftOfLifeCooldown();
 	g_game().reloadCreature(player);
