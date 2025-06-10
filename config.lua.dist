@@ -679,3 +679,9 @@ metricsPrometheusAddress = "0.0.0.0:9464"
 --- OStream
 metricsEnableOstream = false
 metricsOstreamInterval = 1000
+
+-- OTS Statistics (Get more info in: https://github.com/opentibiabr/canary/pull/1692)
+-- NOTE: time in seconds: 30 = 30 seconds, 0 = disabled
+statsDumpInterval = 30
+statsSlowLogTime = 10
+statsVerySlowLogTime = 50

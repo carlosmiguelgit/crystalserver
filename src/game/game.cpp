@@ -71,6 +71,7 @@
 #include "server/network/webhook/webhook.hpp"
 #include "server/server.hpp"
 #include "utils/tools.hpp"
+#include "utils/stats.hpp"
 #include "utils/wildcardtree.hpp"
 #include "creatures/players/vocations/vocation.hpp"
 
@@ -672,6 +673,9 @@ void Game::setGameState(GameState_t newState) {
 
 			g_dispatcher().addEvent([this] { shutdown(); }, __FUNCTION__);
 
+#ifdef STATS_ENABLED
+			g_stats().stop();
+#endif
 			break;
 		}
 
@@ -6609,6 +6613,10 @@ void Game::checkCreatures() {
 	});
 
 	index = (index + 1) % EVENT_CREATURECOUNT;
+
+#ifdef STATS_ENABLED
+	g_stats().playersOnline = getPlayersOnline();
+#endif
 }
 
 void Game::changeSpeed(const std::shared_ptr<Creature> &creature, int32_t varSpeedDelta) {
@@ -8348,6 +8356,10 @@ void Game::shutdown() {
 	map.spawnsMonster.clear();
 	map.spawnsNpc.clear();
 	raids.clear();
+
+#ifdef STATS_ENABLED
+	g_stats().shutdown();
+#endif
 
 	if (serviceManager) {
 		serviceManager->stop();

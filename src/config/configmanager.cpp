@@ -181,6 +181,8 @@ bool ConfigManager::load() {
 	loadBoolConfig(L, UNLOCK_ALL_FAMILIARS, "unlockAllFamiliars", false);
 	loadBoolConfig(L, LEAVE_PARTY_ON_DEATH, "leavePartyOnDeath", false);
 	loadBoolConfig(L, TOGGLE_SPECIAL_TILES, "toggleSpecialTiles", false);
+	loadBoolConfig(L, STATS_TRACK_LUA_ADD_EVENTS, "statsTrackLuaAddEvents", false);
+	loadBoolConfig(L, STATS_TRACK_LUA_ADD_EVENTS_HASHES, "statsTrackLuaAddEventsHashes", false);
 
 	loadFloatConfig(L, BESTIARY_RATE_CHARM_SHOP_PRICE, "bestiaryRateCharmShopPrice", 1.0);
 	loadFloatConfig(L, COMBAT_CHAIN_SKILL_FORMULA_AXE, "combatChainSkillFormulaAxe", 0.9);
@@ -401,6 +403,9 @@ bool ConfigManager::load() {
 	loadIntConfig(L, MARKET_ACTIONS_DELAY_INTERVAL, "marketActionsDelay", 1000);
 	loadIntConfig(L, IMBUEMENT_ACTIONS_DELAY_INTERVAL, "imbueActionsDelay", 1000);
 	loadIntConfig(L, EXPERIENCE_SHARE_ACTIVITY, "experienceShareActivity", 2 * 60 * 1000);
+	loadIntConfig(L, STATS_DUMP_INTERVAL, "statsDumpInterval", 30000);
+	loadIntConfig(L, STATS_SLOW_LOG_TIME, "statsSlowLogTime", 10);
+	loadIntConfig(L, STATS_VERY_SLOW_LOG_TIME, "statsVerySlowLogTime", 50);
 
 	loadStringConfig(L, CORE_DIRECTORY, "coreDirectory", "data");
 	loadStringConfig(L, DATA_DIRECTORY, "dataPackDirectory", "data-global");
