@@ -262,9 +262,11 @@ bool LuaScriptInterface::closeState() {
 	}
 
 	cacheFiles.clear();
-	#ifdef STATS_ENABLED
-		addEventStackTracebackHashCache.clear();
-	#endif
+
+#ifdef STATS_ENABLED
+	addEventStackTracebackHashCache.clear();
+#endif
+
 	if (eventTableRef != -1) {
 		luaL_unref(luaState, LUA_REGISTRYINDEX, eventTableRef);
 		eventTableRef = -1;

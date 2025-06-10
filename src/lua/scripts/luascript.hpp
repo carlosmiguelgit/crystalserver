@@ -82,10 +82,9 @@ protected:
 	int32_t eventTableRef = -1;
 	int32_t runningEventId = EVENT_ID_USER;
 	std::map<int32_t, std::string> cacheFiles;
-	#ifdef STATS_ENABLED
-		std::map<std::string, std::string> addEventStackTracebackHashCache;
-	#endif
-
+#ifdef STATS_ENABLED
+	std::map<std::string, std::string> addEventStackTracebackHashCache;
+#endif
 
 private:
 	std::string getMetricsScope() const;

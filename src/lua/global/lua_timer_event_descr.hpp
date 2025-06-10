@@ -29,10 +29,9 @@ struct LuaTimerEventDesc {
 	int32_t function = -1;
 	std::list<int32_t> parameters;
 	uint32_t eventId = 0;
-	#ifdef STATS_ENABLED
-		std::string stackTraceback;
-	#endif
-
+#ifdef STATS_ENABLED
+	std::string stackTraceback;
+#endif
 
 	LuaTimerEventDesc() = default;
 	LuaTimerEventDesc(LuaTimerEventDesc &&other) = default;

@@ -220,9 +220,9 @@ bool Database::retryQuery(std::string_view query, int retries) {
 
 bool Database::executeQuery(std::string_view query) {
 
-	#ifdef STATS_ENABLED
-		std::chrono::high_resolution_clock::time_point time_point = std::chrono::high_resolution_clock::now();
-	#endif
+#ifdef STATS_ENABLED
+	std::chrono::high_resolution_clock::time_point time_point = std::chrono::high_resolution_clock::now();
+#endif
 
 	if (!handle) {
 		g_logger().error("Database not initialized!");
@@ -239,12 +239,11 @@ bool Database::executeQuery(std::string_view query) {
 	bool success = retryQuery(query, 10);
 	mysql_free_result(mysql_store_result(handle));
 
-	#ifdef STATS_ENABLED
-		uint64_t ns = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - time_point)
-							.count();
-		std::string statsQuery = { query.begin(), query.end() };
-		g_stats().addSqlStats(new Stat(ns, statsQuery.substr(0, 100), statsQuery.substr(0, 256)));
-	#endif
+#ifdef STATS_ENABLED
+	uint64_t ns = std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::high_resolution_clock::now() - time_point).count();
+	std::string statsQuery = { query.begin(), query.end() };
+	g_stats().addSqlStats(new Stat(ns, statsQuery.substr(0, 100), statsQuery.substr(0, 256)));
+#endif
 
 	return success;
 }
