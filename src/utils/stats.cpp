@@ -31,8 +31,7 @@ Stats &Stats::getInstance() {
 	return inject<Stats>();
 }
 
-void Stats::threadMain()
-{
+void Stats::threadMain() {
 	std::unique_lock<std::mutex> taskLockUnique(statsLock, std::defer_lock);
 	bool last_iteration = false;
 	lua.lastDump = sql.lastDump = special.lastDump = OTSYS_TIME();
@@ -73,7 +72,9 @@ void Stats::threadMain()
 			special.lastDump = OTSYS_TIME();
 		}
 
-		if (last_iteration) break;
+		if (last_iteration) {
+			break;
+		}
 		if (getState() == THREAD_STATE_TERMINATED) {
 			last_iteration = true;
 			continue;
@@ -82,26 +83,22 @@ void Stats::threadMain()
 	}
 }
 
-void Stats::addLuaStats(Stat* stats)
-{
+void Stats::addLuaStats(Stat* stats) {
 	std::lock_guard<std::mutex> lockClass(statsLock);
 	lua.queue.push_front(stats);
 }
 
-void Stats::addSqlStats(Stat* stats)
-{
+void Stats::addSqlStats(Stat* stats) {
 	std::lock_guard<std::mutex> lockClass(statsLock);
 	sql.queue.push_front(stats);
 }
 
-void Stats::addSpecialStats(Stat* stats)
-{
+void Stats::addSpecialStats(Stat* stats) {
 	std::lock_guard<std::mutex> lockClass(statsLock);
 	special.queue.push_front(stats);
 }
 
-void Stats::parseLuaQueue(std::forward_list<Stat*>& queue)
-{
+void Stats::parseLuaQueue(std::forward_list<Stat*> &queue) {
 	for (Stat* stats : queue) {
 		auto it = lua.stats.emplace(stats->description, statsData(0, 0, stats->extraDescription)).first;
 		it->second.calls += 1;
@@ -116,8 +113,7 @@ void Stats::parseLuaQueue(std::forward_list<Stat*>& queue)
 	}
 }
 
-void Stats::parseSqlQueue(std::forward_list<Stat*>& queue)
-{
+void Stats::parseSqlQueue(std::forward_list<Stat*> &queue) {
 	for (Stat* stats : queue) {
 		auto it = sql.stats.emplace(stats->description, statsData(0, 0, stats->extraDescription)).first;
 		it->second.calls += 1;
@@ -132,8 +128,7 @@ void Stats::parseSqlQueue(std::forward_list<Stat*>& queue)
 	}
 }
 
-void Stats::parseSpecialQueue(std::forward_list<Stat*>& queue)
-{
+void Stats::parseSpecialQueue(std::forward_list<Stat*> &queue) {
 	for (Stat* stats : queue) {
 		auto it = special.stats.emplace(stats->description, statsData(0, 0, stats->extraDescription)).first;
 		it->second.calls += 1;
@@ -148,22 +143,19 @@ void Stats::parseSpecialQueue(std::forward_list<Stat*>& queue)
 	}
 }
 
-void Stats::writeSlowInfo(const std::string& file, uint64_t executionTime, const std::string& description,
-                          const std::string& extraDescription)
-{
+void Stats::writeSlowInfo(const std::string &file, uint64_t executionTime, const std::string &description, const std::string &extraDescription) {
 	std::ofstream out(std::string("stats/") + file, std::ofstream::out | std::ofstream::app);
 	if (!out.is_open()) {
 		std::clog << "Can't open " << std::string("stats/") + file << " (check if directory exists)" << std::endl;
 		return;
 	}
 	out << "[" << formatDate(time(nullptr)) << "] Execution time: " << (executionTime / 1000000) << " ms - "
-	    << description << " - " << extraDescription << "\n";
+		<< description << " - " << extraDescription << "\n";
 	out.flush();
 	out.close();
 }
 
-void Stats::writeStats(const std::string& file, const statsMap& stats, const std::string& extraInfo) const
-{
+void Stats::writeStats(const std::string &file, const statsMap &stats, const std::string &extraInfo) const {
 	if (DUMP_INTERVAL == 0) {
 		return;
 	}
@@ -180,25 +172,35 @@ void Stats::writeStats(const std::string& file, const statsMap& stats, const std
 	out << "[" << formatDate(time(nullptr)) << "] Players online: " << playersOnline << "\n";
 
 	std::vector<std::pair<std::string, statsData>> pairs;
-	for (auto& it : stats) pairs.emplace_back(it);
+	for (auto &it : stats) {
+		pairs.emplace_back(it);
+	}
 
-	sort(pairs.begin(), pairs.end(),
-	     [=](const std::pair<std::string, statsData>& a, const std::pair<std::string, statsData>& b) {
-		     return a.second.executionTime > b.second.executionTime;
-	     });
+	sort(pairs.begin(), pairs.end(), [=](const std::pair<std::string, statsData> &a, const std::pair<std::string, statsData> &b) {
+		return a.second.executionTime > b.second.executionTime;
+	});
 
 	out << extraInfo;
 	float total_time = 0;
-	out << std::setw(10) << "Time (ms)" << std::setw(10) << "Calls" << std::setw(15) << "Rel usage " << "%"
-	    << std::setw(15) << "Real usage " << "%" << " " << "Description" << "\n";
-	for (auto& it : pairs) total_time += it.second.executionTime;
-	for (auto& it : pairs) {
+	out << std::setw(10) << "Time (ms)" << std::setw(10) << "Calls" << std::setw(15) << "Rel usage "
+		<< "%"
+		<< std::setw(15) << "Real usage "
+		<< "%"
+		<< " "
+		<< "Description"
+		<< "\n";
+	for (auto &it : pairs) {
+		total_time += it.second.executionTime;
+	}
+	for (auto &it : pairs) {
 		float percent = 100 * static_cast<float>(it.second.executionTime) / total_time;
 		float realPercent = static_cast<float>(it.second.executionTime) / (static_cast<float>(DUMP_INTERVAL) * 10000.);
-		if (percent > 0.1)
+		if (percent > 0.1) {
 			out << std::setw(10) << it.second.executionTime / 1000000 << std::setw(10) << it.second.calls
-			    << std::setw(15) << std::setprecision(5) << std::fixed << percent << "%" << std::setw(15)
-			    << std::setprecision(5) << std::fixed << realPercent << "%" << " " << it.first << "\n";
+				<< std::setw(15) << std::setprecision(5) << std::fixed << percent << "%" << std::setw(15)
+				<< std::setprecision(5) << std::fixed << realPercent << "%"
+				<< " " << it.first << "\n";
+		}
 	}
 	out << "\n";
 	out.flush();

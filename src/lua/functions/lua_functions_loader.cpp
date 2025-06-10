@@ -105,7 +105,7 @@ int Lua::protectedCall(lua_State* L, int nargs, int nresults) {
 	int32_t scriptId;
 	int32_t callbackId;
 	bool timerEvent;
-	//auto [scriptId, scriptInterface, callbackId, timerEvent] = getScriptEnv()->getEventInfo();
+	// auto [scriptId, scriptInterface, callbackId, timerEvent] = getScriptEnv()->getEventInfo();
 	LuaScriptInterface* scriptInterface;
 	getScriptEnv()->getEventInfo(scriptId, scriptInterface, callbackId, timerEvent);
 	std::chrono::high_resolution_clock::time_point time_point = std::chrono::high_resolution_clock::now();
