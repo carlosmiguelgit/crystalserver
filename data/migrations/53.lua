@@ -1,8 +1,16 @@
 function onUpdateDatabase()
-	logger.info("Updating database to version 53 (feat: support to 15.00)")
+	logger.info("Updating database to version 53 (fix: player_charms foreign key with ON DELETE CASCADE)")
+
 	db.query([[
-		ALTER TABLE `players`
-		ADD `virtue` int(10) UNSIGNED NOT NULL DEFAULT '0',
-		ADD `harmony` int(10) UNSIGNED NOT NULL DEFAULT '0';
+		ALTER TABLE `player_charms`
+		DROP FOREIGN KEY player_charms_players_fk;
+	]])
+
+	db.query([[
+		ALTER TABLE `player_charms`
+		ADD CONSTRAINT player_charms_players_fk
+		FOREIGN KEY (player_id)
+		REFERENCES players(id)
+		ON DELETE CASCADE;
 	]])
 end
