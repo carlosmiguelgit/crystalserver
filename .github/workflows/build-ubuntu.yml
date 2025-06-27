@@ -28,41 +28,20 @@ jobs:
         with:
           access_token: ${{ github.token }}
 
-  job:
+  build:
     if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
-    name: ${{ matrix.os }}-${{ matrix.buildtype }}
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-22.04, ubuntu-24.04]
-        buildtype: [linux-release, linux-debug]
-        include:
-          - os: ubuntu-22.04
-            triplet: x64-linux
-          - os: ubuntu-24.04
-            triplet: x64-linux
+    name: ubuntu-24.04-linux-release
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@main
 
       - name: Install Linux Dependencies
-        run: >
+        run: |
           sudo apt-get update && sudo apt-get install ccache linux-headers-"$(uname -r)"
 
-      - name: Switch to gcc-13 on Ubuntu 22.04
-        if: matrix.os == 'ubuntu-22.04'
-        run: |
-          sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
-          sudo apt-get update
-          sudo apt install gcc-13 g++-13 -y
-          sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-13 100 --slave /usr/bin/g++ g++ /usr/bin/g++-13 --slave /usr/bin/gcov gcov /usr/bin/gcov-12
-          sudo update-alternatives --set gcc /usr/bin/gcc-13
-
       - name: Switch to gcc-14 on Ubuntu 24.04
-        if: matrix.os == 'ubuntu-24.04'
         run: |
           sudo add-apt-repository ppa:ubuntu-toolchain-r/test -y
           sudo apt-get update
@@ -74,9 +53,9 @@ jobs:
         uses: hendrikmuhs/ccache-action@main
         with:
           max-size: "1G"
-          key: ccache-${{ matrix.os }}-${{ matrix.buildtype }}
+          key: ccache-ubuntu-24.04-linux-release
           restore-keys: |
-            ccache-${{ matrix.os }}
+            ccache-ubuntu-24.04
 
       - name: Restore artifacts and install vcpkg
         id: vcpkg-step
@@ -85,7 +64,7 @@ jobs:
           echo "vcpkg commit ID: $vcpkgCommitId"
           echo "VCPKG_GIT_COMMIT_ID=$vcpkgCommitId" >> "$GITHUB_ENV"
 
-      - name: Get vcpkg commit id from vcpkg.json
+      - name: Get vcpkg
         uses: lukka/run-vcpkg@main
         with:
           vcpkgGitURL: "https://github.com/microsoft/vcpkg.git"
@@ -97,23 +76,23 @@ jobs:
       - name: Run CMake
         uses: lukka/run-cmake@main
         with:
-          configurePreset: ${{ matrix.buildtype }}
-          buildPreset: ${{ matrix.buildtype }}
+          configurePreset: linux-release
+          buildPreset: linux-release
           configurePresetAdditionalArgs: "['-DBUILD_TESTS=ON']"
 
       - name: Create and Upload Artifact
         uses: actions/upload-artifact@main
         with:
-          name: crystalserver-${{ matrix.os }}-${{ matrix.buildtype }}-${{ github.sha }}
+          name: crystalserver-ubuntu-24.04-linux-release-${{ github.sha }}
           path: |
-            ${{ github.workspace }}/build/${{ matrix.buildtype }}/bin/
+            ${{ github.workspace }}/build/linux-release/bin/
 
       - name: Run Unit Tests
         run: |
-          cd ${{ github.workspace }}/build/${{ matrix.buildtype }}/tests/unit
+          cd ${{ github.workspace }}/build/linux-release/tests/unit
           ctest --verbose
 
 #      - name: Run Integration Tests
 #        run: |
-#          cd ${{ github.workspace }}/build/${{ matrix.buildtype }}/tests/integration
+#          cd ${{ github.workspace }}/build/linux-release/tests/integration
 #          ctest --verbose
